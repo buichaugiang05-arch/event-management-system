@@ -1,0 +1,84 @@
+erDiagram
+    USERS ||--o{ USER_ROLES : has
+    ROLES ||--o{ USER_ROLES : assigned
+    USERS ||--o{ EVENTS : organizes
+    CATEGORIES o|--o{ EVENTS : categorizes
+    EVENTS ||--o{ EVENT_SESSIONS : contains
+    USERS ||--o{ REGISTRATIONS : makes
+    EVENTS ||--o{ REGISTRATIONS : receives
+    REGISTRATIONS ||--o| TICKETS : issues
+    TICKETS ||--o| CHECKINS : records
+    USERS o|--o{ CHECKINS : verifies
+    USERS ||--o{ NOTIFICATIONS : receives
+    EVENTS o|--o{ NOTIFICATIONS : relates_to
+
+    USERS {
+        bigint user_id PK
+        varchar full_name
+        varchar email UK
+        varchar password_hash
+        varchar phone
+        enum status
+    }
+    ROLES {
+        bigint role_id PK
+        varchar role_code UK
+        varchar role_name
+    }
+    USER_ROLES {
+        bigint user_id PK, FK
+        bigint role_id PK, FK
+    }
+    CATEGORIES {
+        bigint category_id PK
+        varchar category_name UK
+        enum status
+    }
+    EVENTS {
+        bigint event_id PK
+        bigint category_id FK
+        bigint organizer_id FK
+        varchar event_name
+        varchar location
+        datetime start_at
+        datetime end_at
+        int capacity
+        enum status
+    }
+    EVENT_SESSIONS {
+        bigint session_id PK
+        bigint event_id FK
+        varchar session_title
+        varchar speaker_name
+        datetime start_at
+        datetime end_at
+    }
+    REGISTRATIONS {
+        bigint registration_id PK
+        bigint event_id FK
+        bigint user_id FK
+        enum registration_status
+        datetime registered_at
+    }
+    TICKETS {
+        bigint ticket_id PK
+        bigint registration_id FK, UK
+        varchar ticket_code UK
+        char qr_token UK
+        enum ticket_status
+    }
+    CHECKINS {
+        bigint checkin_id PK
+        bigint ticket_id FK, UK
+        bigint checked_in_by FK
+        datetime checked_in_at
+        enum method
+    }
+    NOTIFICATIONS {
+        bigint notification_id PK
+        bigint recipient_id FK
+        bigint event_id FK
+        varchar subject
+        enum channel
+        enum send_status
+    }
